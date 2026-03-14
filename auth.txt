@@ -1,0 +1,57 @@
+
+Authentication System 
+
+1.Authentication is very imp part of any application. By this way we can ensure that system access given to 
+authorized user.
+
+How to Design and Implement the system?
+How it works with real world Application?
+
+Along with that we have to covered 
+1. Access token 
+2. Refresh token
+3. Token Blacklisting
+4. Token Rotation
+5. OTP Based Verification
+6. Logout System
+7. Logout from all Devices
+
+All the features implement with practical examples.
+
+
+Authentication 
+
+
+
+Client                                                 Server (Insta)
+                                                        /api/posts/like/user
+User A 
+
+User B  ---------------------------------> register rqst to perform any operatons, access services.
+            --------------------> share the details and server saved in DB.
+            ----------------> MongodB save and it give you the id.
+            --> After server create token and store in user browser cookies by response.
+
+User C 
+
+By this way we can't tell which user hit the api.
+
+
+Identify the user rqst come from which user --> Authentication.
+
+--> How server know rqst come with which user.
+
+1.First user --> Register --> To access service / feature/
+        --> By this token server identify the user.
+
+        In Every rqst user sent the token, then if 100 rqst , 1lakh it will sent.
+
+        In that token detail of the user --> like id by which server understand the user. if info correct then access given.
+
+        After some time it will expire. 
+
+In other Device login then it will give the token.
+
+--> Check the token is same.
+
+Also understand the Access token and Refresh token 

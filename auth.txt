@@ -24,17 +24,18 @@ Authentication
 
 
 Client                                                 Server (Insta)
-                                                        /api/posts/like/user
+                                                        /api/posts/like/:pId
 User A 
 
-User B  ---------------------------------> register rqst to perform any operatons, access services.
+User B  ---------------------------------> register rqst , perform any operatons/access services on server don't give it unitl register.
             --------------------> share the details and server saved in DB.
-            ----------------> MongodB save and it give you the id.
+            ----------------> MongodB save and it give you the id.(16byte)
             --> After server create token and store in user browser cookies by response.
+            --> In token we have user details like username, or email or id.
 
 User C 
 
-By this way we can't tell which user hit the api.
+By this way sever understand  which user hit the api.
 
 
 Identify the user rqst come from which user --> Authentication.
@@ -54,4 +55,45 @@ In other Device login then it will give the token.
 
 --> Check the token is same.
 
-Also understand the Access token and Refresh token 
+Also understand the Access token and Refresh token.
+
+wildCard Ip --> 0.0.0.0/0 only for development not use for production
+
+test1
+
+test2  --> by using the token of test1 it can login test1 dashboard.
+
+if we have banking server then it transfer the money from the test1 to test2, becuase test user use the token of test1 
+Server think rqst come from the tes1 user. And sent the data in respnse.
+
+In Bank application 
+amount deduct from the test1 who rqst and credit to test2.
+
+Solution. 
+--> How to store the token in the frontend.
+
+// To store the token at client side.
+
+// local storage --> client side par js we can read it. --> Attacker run script and get the data.
+
+// cookies --> technically store --> http only , client side js not able to access but problem is that
+
+create a form , action ="/api/accoount/transaction:xyx" method=POST --> direct access
+
+Solution --> token in memory
+Problem --> Page reload --> then clear --> token lose.(Not Persistent)
+
+--> Not theft here.
+
+We can use 2 token.
+
+1.Access token --> It will treat as normal token treat. --> server know about who will rqst.
+2.Refresh token --> Memory --> when page reload then run time data gone. 
+// for that specific api create --> 
+
+/api/auth/refresh --> return --> refresh token --> store in cookis.
+// With the help of Refersh token we create the access token.
+
+
+// transcation time we don't use refresh token. Not access the access token from the memory.
+// session.

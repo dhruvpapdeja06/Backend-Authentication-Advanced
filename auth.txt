@@ -97,3 +97,29 @@ We can use 2 token.
 
 // transcation time we don't use refresh token. Not access the access token from the memory.
 // session.
+
+
+// logout from all the system
+
+access token user authenticate on server.
+
+logout --> Maintain sessionId , user generally has max to max 2-4 devices.
+For every device we maintain the session 
+
+session
+{
+        userid,
+        refreshToken, --> store hash
+        ip,
+        userAgent,
+        createdAi,
+        updatedAi,
+        }
+
+Bydefault revoke value is false. 
+if revoke true not
+
+But access token is not expire , by using this we can login , --> blacklist in redis.
+Jwt statlesss then we don't have to take on db.
+But in case of redis , where big-giant company , tradeoff --> where time lookup then response, and cost 
+tradeoff.

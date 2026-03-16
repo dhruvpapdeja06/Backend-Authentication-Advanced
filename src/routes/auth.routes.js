@@ -21,4 +21,22 @@ authRouter.post('/register',authController.registerUserController);
 
 authRouter.get('/get-me',authController.getMeUserController);
 
+
+/**
+ * @route GET /api/auth/refresh-token
+ * @desc Create an access token and with the help of refresh token
+ * @access Private
+ * 
+ */
+
+authRouter.get('/refresh-token',authController.refreshTokenController);
+
+/**
+ * @route GET /api/auth/logout
+ * @desc Logout user 
+ * @access Public
+ */
+
+authRouter.get('/logout',authController.logoutUserController);
+
 export default authRouter;

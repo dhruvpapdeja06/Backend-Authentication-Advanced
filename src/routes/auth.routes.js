@@ -39,4 +39,18 @@ authRouter.get('/refresh-token',authController.refreshTokenController);
 
 authRouter.get('/logout',authController.logoutUserController);
 
+
+/**
+ * @route GET /api/auth/logoutAll
+ */
+authRouter.get('/logout-all',authController.logoutAllController);
+
+
+/**
+ * @route POST /api/auth/login
+ * @desc Login user expect email and password
+ */
+
+authRouter.post('/login',authController.loginUserController);
+
 export default authRouter;

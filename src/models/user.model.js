@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         required: [true, "Password is required to create an account"],
         minLength: 4
     },
+    verified:{
+        type: Boolean,
+        default: false
+    }
 },
     {timestamps : true}
 )

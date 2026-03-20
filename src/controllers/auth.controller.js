@@ -3,6 +3,9 @@ import crypto from 'crypto';
 import config from "../config/config.js";
 import jwt from 'jsonwebtoken';
 import sessionModel from "../models/session.model.js";
+import otpModel from "../models/otp.model.js";
+import { generateOtp , getOtpHtml} from '../utils/utils.js'
+import { sendEmail } from "../services/email.service.js";
 
 /**
  * @name registerUserController
@@ -12,7 +15,7 @@ import sessionModel from "../models/session.model.js";
 export async function registerUserController(req,res){
     const { username, email, password } = req.body;
 
-    if(!username | !email | !password){
+    if(!username || !email || !password){
         return res.status(400).json({
             message: "Please provide username, email and password"
         })
@@ -40,47 +43,34 @@ export async function registerUserController(req,res){
         password : hashPassword
     })
 
-    const refreshToken = jwt.sign({
-        id : user._id
-    }, config.JWT_SECRET,
-        {   
-            expiresIn: "1d"
-        })
-    
+    const otp = generateOtp();
+    const html = getOtpHtml(otp);
 
-    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-
-
-    const session = await sessionModel.create({
-        id: user._id,
-        refreshTokenHash,
-        ip: req.ip,
-        userAgent: req.headers['user-agent']
+    const otpHash = crypto.createHash('sha256').update(otp).digest("hex");
+    await otpModel.create({
+        email,
+        user: user._id,
+        otpHash
     })
 
 
-    res.cookie("refreshToken", refreshToken,{
-        httpOnly: true,  // client side Js not read the cookie 
-        secure: true,
-        sameSite: "strict",
-        maxAge: 1 * 24 * 60 * 60 * 1000
-    }) 
+    try {
+        await sendEmail(email, "OTP Verification", `Your OTP code is ${otp}`, html);
+    } catch (error) {
+        return res.status(500).json({
+        message: "User created but email failed"
+    });
+     }
+   
 
-    // create a token --> Access token --> 15min before that client sent the rqst to refresh token to generate new token
-    const accessToken = jwt.sign({
-        sessionId: session._id,
-        id: user._id
-    },
-    config.JWT_SECRET,
-    {expiresIn : '15m'})
 
     return res.status(201).json({
-        message: "User created successfully",
+        message: "User registered successfully",
         user: {
             username : user.username,
-            email: user.email
-        },
-        accessToken
+            email: user.email,
+            verified: user.verified
+        }
     })
 }
 
@@ -276,6 +266,12 @@ export async function loginUserController(req,res){
         })
     }
 
+    if(!user.verified){
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
+    }
+
 
     const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
 
@@ -326,5 +322,44 @@ export async function loginUserController(req,res){
             email : user.email
         },
         accessToken,
+    })
+}
+
+/**
+ * @name /api/auth/verify-email
+ * @desc Verify the user to access feautures
+ */
+
+export async function verifyEmailController(req,res){
+    const {otp, email} = req.body;
+
+    const otpHash = crypto.createHash('sha256').update(otp).digest("hex");
+
+    const otpDoc = await otpModel.findOne({
+        email,
+        otpHash
+    })
+
+    if(!otpDoc){
+        return res.status(400).json({
+            message: "invalid Otp"
+        })
+    }
+
+    const user = await userModel.findByIdAndUpdate(otpDoc.user,{
+        verified: true
+    })
+
+    await otpModel.deleteMany({
+        user: otpDoc.user
+    })
+
+    return res.status(200).json({
+        message: "Email verified successfully",
+        user: {
+            username: user.username,
+            email: user.email,
+            verified: user.verified
+        }
     })
 }

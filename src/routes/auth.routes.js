@@ -53,4 +53,11 @@ authRouter.get('/logout-all',authController.logoutAllController);
 
 authRouter.post('/login',authController.loginUserController);
 
+
+/**
+ * @route GET /api/auth/verify-email
+ */
+
+authRouter.get('/verify-email',authController.verifyEmailController);
+
 export default authRouter;

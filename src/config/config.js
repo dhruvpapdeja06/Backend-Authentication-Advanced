@@ -22,17 +22,26 @@ if(!process.env.GOOGLE_REFRESH_TOKEN){
     throw new Error("GOOGLE REFRESH TOKEN is not present in environment variable")
 }
 
-if(!process.env.GOOGLE_EMAIL){
-    throw new Error("GOOGLE EMAIl is not present in enviornment variable");
+if(!process.env.GOOGLE_USER){
+    throw new Error("USER is not present in enviornment variable");
 }
+
+
 
 const config = {
     MONGO_URI : process.env.MONGO_URI,
     JWT_SECRET : process.env.JWT_SECRET,
-    clientId : process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    clientToken : process.env.GOOGLE_REFRESH_TOKEN,
-    clientEmail : process.env.GOOGLE_EMAIL
+    CLIENT_ID : process.env.GOOGLE_CLIENT_ID,
+    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    REFRESH_TOKEN : process.env.GOOGLE_REFRESH_TOKEN,
+    USER : process.env.GOOGLE_USER,
+    
 }
+
+console.log("USER:", config.USER);
+console.log("CLIENT_ID:", config.CLIENT_ID);
+console.log("CLIENT_SECRET:", config.CLIENT_SECRET);
+console.log("REFRESH_TOKEN:", config.REFRESH_TOKEN);
+
 
 export default config;
